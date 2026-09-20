@@ -1,0 +1,92 @@
+"use client";
+
+import { mockCommunityMessages, type CommunityMessage } from "@/data/mockCommunity";
+import { formatTimeAgo } from "@/lib/utils";
+
+const typeLabels: Record<string, { icon: string; color: string }> = {
+  report: { icon: "📍", color: "text-risk-high" },
+  update: { icon: "📢", color: "text-accent" },
+  question: { icon: "❓", color: "text-risk-moderate" },
+};
+
+function MessageCard({ message }: { message: CommunityMessage }) {
+  const typeInfo = typeLabels[message.type];
+
+  return (
+    <div className="flex gap-3 py-3 group">
+      {/* Avatar */}
+      <div
+        className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
+        style={{ background: `linear-gradient(135deg, ${message.avatarColor}, color-mix(in srgb, ${message.avatarColor} 70%, black))` }}
+        aria-hidden="true"
+      >
+        {message.initials}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className="text-sm font-semibold text-text-primary">{message.username}</span>
+          <span className={`text-[10px] font-medium uppercase tracking-wider ${typeInfo.color}`}>
+            {message.type}
+          </span>
+          <span className="font-data text-[10px] text-text-tertiary ml-auto shrink-0">
+            {formatTimeAgo(message.timestamp)}
+          </span>
+        </div>
+        <p className="text-xs text-text-secondary leading-relaxed line-clamp-2">
+          {message.message}
+        </p>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <div className="inline-flex items-center gap-1 text-[10px] text-text-tertiary bg-bg-primary/50 px-2 py-0.5 rounded-md border border-border-subtle">
+            <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            {message.location}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function CommunityPreview() {
+  return (
+    <div className="card-static p-5 animate-fade-in relative overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">
+            Community Reports
+          </h2>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest bg-accent/8 text-accent border border-accent/15">
+            Preview
+          </span>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="divide-y divide-border-subtle">
+        {mockCommunityMessages.map((msg) => (
+          <MessageCard key={msg.id} message={msg} />
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div className="mt-4 pt-3 border-t border-border-subtle">
+        <a
+          href="/community"
+          className="w-full flex items-center justify-center gap-2 rounded-xl border border-border-subtle bg-bg-primary/40 px-4 py-3 text-sm font-medium text-accent hover:bg-accent/8 hover:border-accent/20 transition-all duration-200 group"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
+          View Community
+          <svg className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  );
+}
