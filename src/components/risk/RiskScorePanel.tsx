@@ -4,12 +4,11 @@ import RiskGauge from "./RiskGauge";
 import { getRiskSummary } from "@/lib/data-client";
 import { useData } from "@/lib/use-data";
 import { useRegion } from "@/state/region-context";
-import { getRiskBgClass } from "@/lib/utils";
+import { getRiskColorClass, getRiskBgClass } from "@/lib/utils";
 import type { RiskSummary } from "@/data/types";
 
 function SummaryBody({ summary }: { summary: RiskSummary }) {
-  const trendIcon =
-    summary.trend === "up" ? "↑" : summary.trend === "down" ? "↓" : "→";
+  const trendIcon = summary.trend === "up" ? "↑" : summary.trend === "down" ? "↓" : "→";
   const trendColorClass =
     summary.trend === "up"
       ? "text-risk-high"
@@ -19,43 +18,40 @@ function SummaryBody({ summary }: { summary: RiskSummary }) {
 
   return (
     <>
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-4">
         <div>
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">
-            Risk Assessment
-          </h2>
-          <p className="text-[11px] text-text-tertiary mt-0.5">{summary.regionName} Region</p>
+          <p className="eyebrow">Risk assessment</p>
+          <p className="serif-display text-xl font-semibold text-text-primary mt-1">
+            {summary.regionName}
+          </p>
         </div>
         <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border ${getRiskBgClass(summary.level)}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${getRiskBgClass(summary.level)}`}
         >
           <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
           {summary.level}
         </span>
       </div>
 
-      <div className="flex justify-center mb-1">
+      <div className="flex justify-center mb-3">
         <RiskGauge score={summary.score} />
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 mb-4">
-        <div className="rounded-xl bg-bg-primary/60 border border-border-subtle p-3">
-          <div className="text-[9px] font-semibold uppercase tracking-widest text-text-tertiary mb-1.5">
-            24h Trend
-          </div>
+        <div className="card-tint p-3">
+          <div className="eyebrow eyebrow-xs mb-1.5">24h trend</div>
           <div className="flex items-center gap-1.5">
             <span className={`text-lg font-bold ${trendColorClass}`}>{trendIcon}</span>
-            <span className={`font-data text-sm font-bold ${trendColorClass}`}>
+            <span className={`font-data text-sm font-semibold ${trendColorClass}`}>
               {summary.trendDelta}
             </span>
+            <span className="text-xs text-text-tertiary ml-auto font-data">{summary.score}</span>
           </div>
         </div>
-        <div className="rounded-xl bg-bg-primary/60 border border-border-subtle p-3">
-          <div className="text-[9px] font-semibold uppercase tracking-widest text-text-tertiary mb-1.5">
-            Confidence
-          </div>
+        <div className="card-tint p-3">
+          <div className="eyebrow eyebrow-xs mb-1.5">Confidence</div>
           <div className="flex items-center gap-2">
-            <span className="font-data text-sm font-bold text-text-primary">
+            <span className="font-data text-sm font-semibold text-text-primary">
               {summary.confidence}%
             </span>
             <div className="flex-1 h-1.5 rounded-full bg-border-subtle overflow-hidden">
@@ -68,15 +64,19 @@ function SummaryBody({ summary }: { summary: RiskSummary }) {
         </div>
       </div>
 
-      <div className="border-t border-border-subtle pt-3 flex-1">
-        <div className="text-[9px] font-semibold uppercase tracking-widest text-text-tertiary mb-2.5">
-          Key Risk Factors
-        </div>
-        <div className="space-y-2">
+      <div className="border-t border-border-subtle">
+        <div className="eyebrow eyebrow-xs mb-2 mt-3">Key risk factors</div>
+        <div className="divide-y divide-border-subtle">
           {summary.factors.map((factor) => (
-            <div key={factor.label} className="flex items-center justify-between rounded-lg bg-bg-primary/30 px-3 py-2">
-              <span className="text-xs text-text-secondary">{factor.label}</span>
-              <span className={`font-data text-xs font-semibold ${factor.level === "high" ? "text-risk-high" : factor.level === "critical" ? "text-risk-critical" : "text-risk-moderate"}`}>
+            <div key={factor.label} className="flex items-center justify-between py-2">
+              <span className="flex items-center gap-2.5 text-sm text-text-secondary">
+                <span
+                  className={cnFactor(factor.level)}
+                  aria-hidden="true"
+                />
+                {factor.label}
+              </span>
+              <span className={`font-data text-sm font-semibold ${getRiskColorClass(factor.level)}`}>
                 {factor.value}
               </span>
             </div>
@@ -92,6 +92,17 @@ function SummaryBody({ summary }: { summary: RiskSummary }) {
       </div>
     </>
   );
+}
+
+function cnFactor(level: string) {
+  const base = "w-1 h-1 rounded-full shrink-0 self-center inline-block";
+  const color =
+    level === "high"
+      ? "bg-risk-high"
+      : level === "critical"
+        ? "bg-risk-critical"
+        : "bg-risk-moderate";
+  return `${base} ${color}`;
 }
 
 export default function RiskScorePanel() {
@@ -122,9 +133,7 @@ export default function RiskScorePanel() {
         </div>
       ) : data === null ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary mb-3">
-            Risk Assessment
-          </h2>
+          <p className="eyebrow mb-3">Risk assessment</p>
           <p className="text-sm text-text-secondary">
             No monitored zones in {region.name} yet.
           </p>

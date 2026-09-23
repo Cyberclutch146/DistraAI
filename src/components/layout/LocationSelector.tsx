@@ -74,16 +74,14 @@ export default function LocationSelector() {
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-64 max-h-[70vh] overflow-y-auto rounded-xl border border-border-subtle bg-bg-elevated shadow-xl animate-slide-down z-50"
+          className="absolute right-0 top-full mt-2 w-72 max-h-[70vh] overflow-y-auto rounded-xl border border-border-subtle bg-bg-elevated shadow-pop animate-fade-in z-50"
           role="listbox"
           aria-label="Location options"
         >
-          <div className="p-1.5">
+          <div className="p-2">
             {groups.map((group) => (
               <div key={group.label}>
-                <div className="px-3 pt-2 pb-1 text-[9px] font-semibold uppercase tracking-widest text-text-tertiary">
-                  {group.label}
-                </div>
+                <div className="eyebrow px-3 pt-2.5 pb-1.5">{group.label}</div>
                 {group.regions.map((loc) => (
                   <button
                     key={loc.id}
@@ -93,7 +91,7 @@ export default function LocationSelector() {
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors",
                       selected.id === loc.id
-                        ? "bg-accent/10 text-accent"
+                        ? "bg-accent-subtle text-accent"
                         : "text-text-primary hover:bg-bg-surface-hover"
                     )}
                   >

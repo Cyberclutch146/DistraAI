@@ -16,28 +16,28 @@ function getFeatureStyle(feature: RiskZoneFeature) {
   const level = feature.properties.riskLevel;
   return {
     fillColor: RISK_COLORS[level],
-    fillOpacity: 0.3,
+    fillOpacity: 0.22,
     color: RISK_COLORS[level],
-    weight: 2,
-    opacity: 0.8,
+    weight: 1.5,
+    opacity: 0.9,
   };
 }
 
 function onEachFeature(feature: RiskZoneFeature, layer: L.Layer) {
   const p = feature.properties;
   const popupContent = `
-    <div style="min-width: 200px; padding: 4px 0;">
-      <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${p.name}</div>
-      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: ${RISK_COLORS[p.riskLevel]};" aria-hidden="true"></span>
-        <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; color: ${RISK_COLORS[p.riskLevel]};">${p.riskLevel}</span>
-        <span style="font-size: 11px; color: hsl(0 0% 50%); margin-left: auto;">Score: ${p.riskScore}</span>
+    <div style="min-width: 220px; padding: 4px 0; color: #26211b;">
+      <div style="font-family: Georgia, serif; font-size: 16px; font-weight: 600; margin-bottom: 8px;">${p.name}</div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid #e2d8c6; padding-bottom: 8px;">
+        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 1px; background: ${RISK_COLORS[p.riskLevel]};" aria-hidden="true"></span>
+        <span style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.06em; color: ${RISK_COLORS[p.riskLevel]};">${p.riskLevel}</span>
+        <span style="font-size: 11px; font-family: monospace; color: #8a7d6e; margin-left: auto;">score ${p.riskScore} / 100</span>
       </div>
-      <div style="font-size: 12px; color: hsl(0 0% 70%); line-height: 1.4;">${p.description}</div>
+      <div style="font-size: 13px; color: #6a6054; line-height: 1.45;">${p.description}</div>
     </div>
   `;
   (layer as L.Path).bindPopup(popupContent, {
-    maxWidth: 300,
+    maxWidth: 320,
     className: "risk-popup",
   });
 }
@@ -113,7 +113,7 @@ export default function RiskMap({
 
   return (
     <div
-      className={`relative w-full ${heightClassName} rounded-2xl overflow-hidden border border-border-subtle`}
+      className={`relative w-full ${heightClassName} rounded-2xl overflow-hidden border border-border-subtle shadow-card`}
     >
       <MapContainer
         center={[region.center.lat, region.center.lng]}
@@ -123,8 +123,8 @@ export default function RiskMap({
         attributionControl={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
         {data && data.features.length > 0 && (
           <RiskOverlay collection={data} activeLayer={activeLayer} />
@@ -142,17 +142,17 @@ export default function RiskMap({
       </div>
 
       <div className="absolute top-4 left-4 z-[1000]">
-        <div className="flex items-center gap-2 rounded-lg bg-bg-primary/90 backdrop-blur-md border border-border-subtle px-3 py-1.5 shadow-lg">
+        <div className="flex items-center gap-2.5 rounded-lg bg-bg-elevated/90 backdrop-blur-sm border border-border-subtle px-3 py-1.5 shadow-card">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-risk-low opacity-75" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-risk-low opacity-60" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-risk-low" />
           </span>
-          <span className="text-xs font-medium text-text-secondary">{region.name}</span>
+          <span className="font-data text-xs font-medium text-text-primary">{region.name}</span>
         </div>
       </div>
 
       {error && (
-        <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-bg-primary/60 backdrop-blur-sm">
+        <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-bg-primary/70 backdrop-blur-sm">
           <p className="text-sm text-risk-high px-4 text-center">
             Failed to load risk zones for {region.name}.
           </p>
@@ -161,8 +161,8 @@ export default function RiskMap({
 
       {!error && data && data.features.length === 0 && (
         <div className="absolute inset-x-0 bottom-24 z-[1001] flex justify-center px-4">
-          <div className="rounded-xl border border-border-subtle bg-bg-primary/90 backdrop-blur-md px-4 py-3 shadow-lg">
-            <p className="text-xs text-text-secondary">
+          <div className="rounded-xl border border-border-subtle bg-bg-elevated/95 backdrop-blur-sm px-4 py-3 shadow-card">
+            <p className="text-sm text-text-secondary">
               No monitored risk zones in {region.name} yet.
             </p>
           </div>
@@ -171,9 +171,9 @@ export default function RiskMap({
 
       {!error && !data && (
         <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-bg-primary/40">
-          <svg className="h-8 w-8 animate-spin text-text-secondary" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="30 70" />
-          </svg>
+          <span className="font-data text-xs uppercase tracking-widest text-text-tertiary">
+            Loading zones…
+          </span>
         </div>
       )}
     </div>

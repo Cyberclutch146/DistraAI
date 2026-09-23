@@ -11,7 +11,7 @@ export default function GlobalError({
     <html lang="en">
       <body
         className="min-h-full bg-bg-primary font-sans text-text-primary"
-        style={{ fontFamily: "var(--font-inter), ui-sans-serif, system-ui, sans-serif" }}
+        style={{ fontFamily: "var(--font-karla), ui-sans-serif, system-ui, sans-serif" }}
       >
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
           <div className="font-data text-xs font-bold uppercase tracking-widest text-risk-high">

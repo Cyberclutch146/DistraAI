@@ -1,10 +1,10 @@
 import type { RiskLevel } from "@/data/types";
 
 export const RISK_COLORS: Record<RiskLevel, string> = {
-  low: "#3dba6c",
-  moderate: "#e8b930",
-  high: "#d94444",
-  critical: "#a62020",
+  low: "#5b8049",
+  moderate: "#b8892a",
+  high: "#c4512c",
+  critical: "#a0281b",
 };
 
 export function riskColor(level: RiskLevel): string {

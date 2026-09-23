@@ -18,7 +18,7 @@ const layers: { id: RiskLayer; label: string; icon: string }[] = [
 export default function LayerToggle({ activeLayer, onLayerChange }: LayerToggleProps) {
   return (
     <div
-      className="flex rounded-xl border border-border-subtle bg-bg-primary/90 backdrop-blur-md p-1 shadow-lg"
+      className="flex rounded-xl border border-border-subtle bg-bg-elevated/95 backdrop-blur-sm p-1 shadow-card"
       role="tablist"
       aria-label="Risk layer selection"
     >
@@ -29,9 +29,9 @@ export default function LayerToggle({ activeLayer, onLayerChange }: LayerToggleP
           aria-selected={activeLayer === layer.id}
           onClick={() => onLayerChange(layer.id)}
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
             activeLayer === layer.id
-              ? "bg-accent/15 text-accent shadow-sm"
+              ? "bg-accent-subtle text-accent"
               : "text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover"
           )}
         >

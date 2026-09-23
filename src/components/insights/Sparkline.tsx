@@ -1,7 +1,5 @@
 "use client";
 
-import { useId } from "react";
-
 interface SparklineProps {
   data: number[];
   color?: string;
@@ -31,10 +29,8 @@ export default function Sparkline({
   height = 40,
   threshold,
   thresholdColor = "var(--risk-high)",
-  fillOpacity = 0.1,
+  fillOpacity = 0.08,
 }: SparklineProps) {
-  const gradientId = `sparkline-gradient-${useId().replace(/[:]/g, "")}`;
-
   if (data.length < 2) return null;
 
   const min = Math.min(...data);
@@ -77,14 +73,8 @@ export default function Sparkline({
       className="overflow-visible"
       aria-hidden="true"
     >
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity={fillOpacity * 2} />
-          <stop offset="100%" stopColor={color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-
-      <path d={fillPath} fill={`url(#${gradientId})`} />
+      {/* Flat tint, not a gradient fill */}
+      <path d={fillPath} fill={color} opacity={fillOpacity} />
 
       <path
         d={linePath}

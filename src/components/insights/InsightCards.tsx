@@ -30,24 +30,22 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
-            className="flex items-center justify-center h-7 w-7 rounded-lg text-sm"
-            style={{ background: `color-mix(in srgb, ${statusColors[insight.status]} 12%, transparent)` }}
+            className="flex items-center justify-center h-7 w-7 rounded-lg text-sm text-text-secondary bg-bg-wash border border-border-subtle"
+            aria-hidden="true"
           >
-            <span aria-hidden="true">{insight.icon}</span>
+            {insight.icon}
           </div>
-          <h3 className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
-            {insight.title}
-          </h3>
+          <h3 className="eyebrow">{insight.title}</h3>
         </div>
         <div
-          className="h-2 w-2 rounded-full ring-2 ring-bg-surface"
+          className="h-2 w-2 rounded-full ring-2 ring-bg-wash"
           style={{ backgroundColor: statusColors[insight.status] }}
           aria-label={`Status: ${insight.status}`}
         />
       </div>
 
       <div className="flex items-baseline gap-2 mb-3">
-        <span className="font-data text-[26px] font-bold text-text-primary leading-none">
+        <span className="font-data text-[26px] font-bold text-text-primary leading-none tracking-tight">
           {insight.value}
         </span>
         <span className="font-data text-sm text-text-tertiary">{insight.unit}</span>
@@ -96,9 +94,7 @@ export default function InsightCards() {
   if (error) {
     return (
       <div className="card-static p-5">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary mb-2">
-          Environmental Data
-        </h2>
+        <p className="eyebrow mb-2">Environmental data</p>
         <p className="text-sm text-risk-high">Failed to load environmental data.</p>
         <p className="text-xs text-text-tertiary mt-1">{error}</p>
       </div>
@@ -107,9 +103,7 @@ export default function InsightCards() {
 
   return (
     <div>
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary mb-4">
-        Environmental Data
-      </h2>
+      <p className="eyebrow mb-4">Environmental data</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         {loading || !data
           ? Array.from({ length: 4 }, (_, index) => <InsightSkeleton key={index} />)

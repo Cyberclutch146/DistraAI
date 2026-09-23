@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { useRegion } from "@/state/region-context";
 import { getCommunity } from "@/lib/data-client";
 import { useData } from "@/lib/use-data";
-import { MessageCard, typeLabels, CommunitySkeleton } from "@/components/community/CommunityPreview";
+import { MessageCard, CommunitySkeleton } from "@/components/community/CommunityPreview";
 
 const filters = ["all", "report", "update", "question"] as const;
 type FilterId = (typeof filters)[number];
@@ -35,55 +35,58 @@ export default function CommunityView() {
 
       <main className="flex-1">
         <section className="px-4 sm:px-6 lg:px-8 py-6 mx-auto max-w-[1600px]">
-          <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
-            <div>
-              <h1 className="text-xl font-bold text-text-primary tracking-tight">Community Reports</h1>
-              <p className="text-xs text-text-tertiary mt-0.5">
-                Ground-level reports shared by local observers. Messages are sample data.
-              </p>
-            </div>
-            <span className="text-[11px] text-text-tertiary">Region: {region.name}</span>
+          <div className="max-w-2xl mb-6">
+            <p className="eyebrow mb-1">Ground truth</p>
+            <h1 className="serif-display text-3xl sm:text-4xl font-medium tracking-tight">
+              Community reports
+            </h1>
+            <p className="text-sm text-text-secondary mt-1">
+              Ground-level reports shared by local observers. Messages are sample data.
+            </p>
           </div>
 
-          <div className="card-static p-5">
+          <div className="card-static p-5 sm:p-6">
             {(data ?? []).length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Filter community messages">
+              <div
+                className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border-subtle mb-2"
+                role="tablist"
+                aria-label="Filter community messages"
+              >
                 {filters.map((filter) => {
                   const label = filterLabels[filter];
-                  const icon = filter === "all" ? null : typeLabels[filter].icon;
                   return (
                     <span
                       key={filter}
-                      className="rounded-lg border border-border-subtle bg-bg-primary/40 px-3 py-1.5 text-xs"
+                      className="font-data text-sm capitalize text-text-secondary border-b-2 border-transparent -mb-3 py-3 pb-3.5"
                     >
-                      {icon && (
-                        <span className="mr-1.5" aria-hidden="true">{icon}</span>
-                      )}
                       {label}
-                      <span className="ml-1.5 font-data text-text-tertiary">
+                      <span className="ml-1.5 text-text-tertiary">
                         {filter === "all" ? data?.length : counts[filter] ?? 0}
                       </span>
                     </span>
                   );
                 })}
+                <span className="ml-auto font-data text-[11px] text-text-tertiary">
+                  Region: {region.name}
+                </span>
               </div>
             )}
 
-            <div className="mt-2 divide-y divide-border-subtle">
-              {error ? (
-                <p className="text-sm text-risk-high py-4">Failed to load community reports.</p>
-              ) : loading || !data ? (
-                <CommunitySkeleton />
-              ) : data.length === 0 ? (
-                <p className="text-sm text-text-secondary py-6 text-center">
-                  No community reports yet.
-                </p>
-              ) : (
-                data.map((message) => (
+            {error ? (
+              <p className="text-sm text-risk-high py-4">Failed to load community reports.</p>
+            ) : loading || !data ? (
+              <CommunitySkeleton />
+            ) : data.length === 0 ? (
+              <p className="text-sm text-text-secondary py-6 text-center">
+                No community reports yet.
+              </p>
+            ) : (
+              <div className="divide-y divide-border-subtle">
+                {data.map((message) => (
                   <MessageCard key={message.id} message={message} />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
