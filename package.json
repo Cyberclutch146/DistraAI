@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs:components": "typedoc --plugin typedoc-plugin-markdown --out docs/components --entryPointStrategy expand --exclude \"**/__tests__/**\" src/components"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
@@ -26,6 +27,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.6.0",
     "typescript": "^5",
     "vitest": "^3.2.7"
   }
