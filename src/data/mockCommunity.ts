@@ -1,13 +1,4 @@
-export interface CommunityMessage {
-  id: string;
-  username: string;
-  initials: string;
-  avatarColor: string;
-  message: string;
-  timestamp: Date;
-  location: string;
-  type: "report" | "update" | "question";
-}
+import type { CommunityMessage } from "./types";
 
 const now = new Date();
 const minsAgo = (m: number) => new Date(now.getTime() - m * 60000);

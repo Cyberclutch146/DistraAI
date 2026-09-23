@@ -1,11 +1,4 @@
-export interface Alert {
-  id: string;
-  severity: "low" | "moderate" | "high" | "critical";
-  region: string;
-  description: string;
-  timestamp: Date;
-  type: "flood" | "landslide" | "combined";
-}
+import type { Alert } from "./types";
 
 const now = new Date();
 const hoursAgo = (h: number) => new Date(now.getTime() - h * 3600000);
@@ -15,6 +8,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-001",
     severity: "critical",
+    regionId: "wayanad",
     region: "Wayanad District",
     description:
       "Imminent landslide risk detected. Soil moisture exceeds 95% threshold on 3 monitored slopes. Satellite imagery shows terrain displacement.",
@@ -24,6 +18,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-002",
     severity: "high",
+    regionId: "kochi",
     region: "Kochi Metro",
     description:
       "River Periyar water level at 9.2m (danger mark: 9.5m). Flash flood risk elevated for low-lying areas within 6 hours.",
@@ -33,6 +28,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-003",
     severity: "high",
+    regionId: "idukki",
     region: "Idukki Highlands",
     description:
       "Idukki reservoir at 93% capacity. Controlled release may begin within 4 hours. Downstream flood risk increasing.",
@@ -42,6 +38,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-004",
     severity: "moderate",
+    regionId: "munnar",
     region: "Munnar Hills",
     description:
       "Continuous rainfall (48h accumulation: 186mm) weakening slope stability in deforested tea plantation zones.",
@@ -51,6 +48,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-005",
     severity: "moderate",
+    regionId: "kozhikode",
     region: "Kozhikode Urban",
     description:
       "Urban drainage systems at 72% capacity. Localized waterlogging reported in 4 wards. Monitoring escalated.",
@@ -60,6 +58,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-006",
     severity: "moderate",
+    regionId: "alappuzha",
     region: "Alappuzha Backwaters",
     description:
       "Backwater levels rising steadily. Kuttanad region paddy fields at risk of inundation within 24 hours.",
@@ -69,6 +68,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-007",
     severity: "low",
+    regionId: "thrissur",
     region: "Thrissur Plains",
     description:
       "Minor waterlogging in agricultural zones. River levels rising but within safe thresholds. Monitoring continues.",
@@ -78,6 +78,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-008",
     severity: "low",
+    regionId: "palakkad",
     region: "Palakkad Gap",
     description:
       "Seasonal monsoon conditions normal. Wind speeds elevated but no structural risk detected. Routine monitoring.",
@@ -87,6 +88,7 @@ export const mockAlerts: Alert[] = [
   {
     id: "ALT-009",
     severity: "low",
+    regionId: "thiruvananthapuram",
     region: "Thiruvananthapuram Coast",
     description:
       "Coastal conditions stable. Tidal patterns normal. No flood risk indicators above baseline.",

@@ -1,8 +1,10 @@
 "use client";
 
-import { mockInsights, type InsightData } from "@/data/mockInsights";
+import { getInsights } from "@/lib/data-client";
+import { useData } from "@/lib/use-data";
 import Sparkline from "./Sparkline";
 import { cn } from "@/lib/utils";
+import type { InsightData } from "@/data/types";
 
 const statusColors: Record<string, string> = {
   normal: "var(--risk-low)",
@@ -25,29 +27,25 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
       className="card p-4 min-w-[220px] flex-1 animate-slide-up"
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
-            className="flex items-center justify-center h-7 w-7 rounded-lg text-sm"
-            style={{ background: `color-mix(in srgb, ${statusColors[insight.status]} 12%, transparent)` }}
+            className="flex items-center justify-center h-7 w-7 rounded-lg text-sm text-text-secondary bg-bg-wash border border-border-subtle"
+            aria-hidden="true"
           >
-            <span aria-hidden="true">{insight.icon}</span>
+            {insight.icon}
           </div>
-          <h3 className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
-            {insight.title}
-          </h3>
+          <h3 className="eyebrow">{insight.title}</h3>
         </div>
         <div
-          className="h-2 w-2 rounded-full ring-2 ring-bg-surface"
+          className="h-2 w-2 rounded-full ring-2 ring-bg-wash"
           style={{ backgroundColor: statusColors[insight.status] }}
           aria-label={`Status: ${insight.status}`}
         />
       </div>
 
-      {/* Value + trend */}
       <div className="flex items-baseline gap-2 mb-3">
-        <span className="font-data text-[26px] font-bold text-text-primary leading-none">
+        <span className="font-data text-[26px] font-bold text-text-primary leading-none tracking-tight">
           {insight.value}
         </span>
         <span className="font-data text-sm text-text-tertiary">{insight.unit}</span>
@@ -57,23 +55,16 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
         </div>
       </div>
 
-      {/* Sparkline */}
       <div className="mt-1">
         <Sparkline
           data={insight.sparklineData}
           color={statusColors[insight.status]}
-          threshold={insight.threshold
-            ? ((insight.threshold - Math.min(...insight.sparklineData)) /
-                (Math.max(...insight.sparklineData) - Math.min(...insight.sparklineData))) *
-                100 +
-              Math.min(...insight.sparklineData)
-            : undefined}
+          threshold={insight.threshold}
           width={200}
           height={48}
         />
       </div>
 
-      {/* Threshold indicator */}
       {insight.threshold && (
         <div className="mt-2.5 flex items-center gap-1.5 text-[10px] text-text-tertiary">
           <span className="h-px w-3 border-t border-dashed border-risk-high" aria-hidden="true" />
@@ -84,16 +75,41 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
   );
 }
 
+function InsightSkeleton() {
+  return (
+    <div className="card p-4 min-w-[220px] flex-1 animate-pulse">
+      <div className="flex items-center justify-between mb-3">
+        <div className="h-7 w-28 rounded-lg bg-bg-surface-hover" />
+        <div className="h-2 w-2 rounded-full bg-bg-surface-hover" />
+      </div>
+      <div className="h-8 w-16 rounded bg-bg-surface-hover mb-4" />
+      <div className="h-12 rounded bg-bg-surface-hover" />
+    </div>
+  );
+}
+
 export default function InsightCards() {
+  const { data, loading, error } = useData(() => getInsights(), []);
+
+  if (error) {
+    return (
+      <div className="card-static p-5">
+        <p className="eyebrow mb-2">Environmental data</p>
+        <p className="text-sm text-risk-high">Failed to load environmental data.</p>
+        <p className="text-xs text-text-tertiary mt-1">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary mb-4">
-        Environmental Data
-      </h2>
+      <p className="eyebrow mb-4">Environmental data</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        {mockInsights.map((insight, index) => (
-          <InsightCard key={insight.id} insight={insight} index={index} />
-        ))}
+        {loading || !data
+          ? Array.from({ length: 4 }, (_, index) => <InsightSkeleton key={index} />)
+          : data.map((insight, index) => (
+              <InsightCard key={insight.id} insight={insight} index={index} />
+            ))}
       </div>
     </div>
   );
