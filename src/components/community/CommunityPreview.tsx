@@ -1,20 +1,22 @@
 "use client";
 
-import { mockCommunityMessages, type CommunityMessage } from "@/data/mockCommunity";
+import Link from "next/link";
+import { getCommunity } from "@/lib/data-client";
+import { useData } from "@/lib/use-data";
 import { formatTimeAgo } from "@/lib/utils";
+import type { CommunityMessage } from "@/data/types";
 
-const typeLabels: Record<string, { icon: string; color: string }> = {
+export const typeLabels: Record<string, { icon: string; color: string }> = {
   report: { icon: "📍", color: "text-risk-high" },
   update: { icon: "📢", color: "text-accent" },
   question: { icon: "❓", color: "text-risk-moderate" },
 };
 
-function MessageCard({ message }: { message: CommunityMessage }) {
+export function MessageCard({ message }: { message: CommunityMessage }) {
   const typeInfo = typeLabels[message.type];
 
   return (
     <div className="flex gap-3 py-3 group">
-      {/* Avatar */}
       <div
         className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
         style={{ background: `linear-gradient(135deg, ${message.avatarColor}, color-mix(in srgb, ${message.avatarColor} 70%, black))` }}
@@ -50,10 +52,27 @@ function MessageCard({ message }: { message: CommunityMessage }) {
   );
 }
 
+export function CommunitySkeleton() {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div key={index} className="flex gap-3 py-3 animate-pulse">
+          <div className="h-9 w-9 rounded-xl bg-bg-surface-hover" />
+          <div className="flex-1 space-y-2 py-1">
+            <div className="h-3 w-1/3 rounded bg-bg-surface-hover" />
+            <div className="h-3 w-full rounded bg-bg-surface-hover" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function CommunityPreview() {
+  const { data, loading, error } = useData(() => getCommunity(), []);
+
   return (
     <div className="card-static p-5 animate-fade-in relative overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-text-tertiary">
@@ -65,16 +84,20 @@ export default function CommunityPreview() {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="divide-y divide-border-subtle">
-        {mockCommunityMessages.map((msg) => (
-          <MessageCard key={msg.id} message={msg} />
-        ))}
-      </div>
+      {error ? (
+        <p className="text-xs text-risk-high py-2">Failed to load community reports.</p>
+      ) : loading || !data ? (
+        <CommunitySkeleton />
+      ) : (
+        <div className="divide-y divide-border-subtle">
+          {data.map((msg) => (
+            <MessageCard key={msg.id} message={msg} />
+          ))}
+        </div>
+      )}
 
-      {/* CTA */}
       <div className="mt-4 pt-3 border-t border-border-subtle">
-        <a
+        <Link
           href="/community"
           className="w-full flex items-center justify-center gap-2 rounded-xl border border-border-subtle bg-bg-primary/40 px-4 py-3 text-sm font-medium text-accent hover:bg-accent/8 hover:border-accent/20 transition-all duration-200 group"
         >
@@ -85,7 +108,7 @@ export default function CommunityPreview() {
           <svg className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
-        </a>
+        </Link>
       </div>
     </div>
   );

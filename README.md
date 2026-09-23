@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DistraAI
 
-## Getting Started
+A Next.js disaster intelligence dashboard prototype. It visualizes risk zones,
+active alerts, and live sensor insights per region, backed by bundled sample
+data. All routes are browsable with an in-memory data source; the API route
+handlers exist so a real backend can be swapped in.
 
-First, run the development server:
+Built with Next.js (App Router), React, TypeScript, Tailwind CSS, and Leaflet.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command              | Runs                                                        |
+| -------------------- | ----------------------------------------------------------- |
+| `npm run dev`        | Start the dev server                                        |
+| `npm run build`      | Production build (Turbopack)                                |
+| `npm run start`      | Serve the production build                                  |
+| `npm run lint`       | ESLint (flat config)                                        |
+| `npm run typecheck`  | `tsc --noEmit`                                              |
+| `npm run test`       | Vitest unit tests                                           |
 
-## Learn More
+CI runs lint → typecheck → test → build on every push/PR
+(`.github/workflows/ci.yml`).
 
-To learn more about Next.js, take a look at the following resources:
+## Data source
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Components read data through `src/lib/data-client.ts`, which resolves a data
+provider from `NEXT_PUBLIC_DATA_PROVIDER` (default `mock`, see `.env.example`):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `mock` — bundled sample fixtures served directly to the app.
+- `api` — fetches from the `/api/*` route handlers, which currently serve the
+  same sample fixtures. Replace these handlers with real database queries when
+  a backend is ready.
 
-## Deploy on Vercel
+## Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/data/` — shared domain types and sample fixtures, keyed by region.
+- `src/lib/` — data client, mock store, risk-score computation, and hooks.
+- `src/state/` — region selection context (synced to the `?region=` URL param).
+- `src/components/` — dashboards widgets, map, layout.
+- `src/app/` — routes plus `api/` handlers and loading/error/not-found states.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Every region is selectable from the global location picker. Kerala's nine
+districts carry sample risk zones and alerts; other regions show empty states.
+
+## WSL note
+
+Turbopack and Node's `copyFile` cannot write to Windows drives (`/mnt/c`).
+For `next build`, prefer running it on Linux (CI) or point the output elsewhere:
+
+```bash
+NEXT_DIST_DIR=/tmp/distraai next build
+```
+
+(`next.config.ts` reads `NEXT_DIST_DIR` when set.)

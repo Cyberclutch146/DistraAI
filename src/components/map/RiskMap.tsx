@@ -6,17 +6,14 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import LayerToggle, { type RiskLayer } from "./LayerToggle";
 import MapLegend from "./MapLegend";
-import { mockRiskZones, type RiskZoneFeature } from "@/data/mockRiskZones";
+import { useRegion } from "@/state/region-context";
+import { getRiskZones } from "@/lib/data-client";
+import { useData } from "@/lib/use-data";
+import { RISK_COLORS } from "@/lib/risk-colors";
+import type { Region, RiskZoneCollection, RiskZoneFeature } from "@/data/types";
 
-const RISK_COLORS: Record<string, string> = {
-  low: "#3dba6c",       // --risk-low
-  moderate: "#e8b930",  // --risk-moderate
-  high: "#d94444",      // --risk-high
-  critical: "#a62020",  // --risk-critical
-};
-
-function getFeatureStyle(feature: RiskZoneFeature | undefined) {
-  const level = feature?.properties.riskLevel || "low";
+function getFeatureStyle(feature: RiskZoneFeature) {
+  const level = feature.properties.riskLevel;
   return {
     fillColor: RISK_COLORS[level],
     fillOpacity: 0.3,
@@ -27,36 +24,39 @@ function getFeatureStyle(feature: RiskZoneFeature | undefined) {
 }
 
 function onEachFeature(feature: RiskZoneFeature, layer: L.Layer) {
-  if (feature.properties) {
-    const p = feature.properties;
-    const popupContent = `
-      <div style="min-width: 200px; padding: 4px 0;">
-        <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${p.name}</div>
-        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: ${RISK_COLORS[p.riskLevel]};" aria-hidden="true"></span>
-          <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; color: ${RISK_COLORS[p.riskLevel]};">${p.riskLevel}</span>
-          <span style="font-size: 11px; color: hsl(0 0% 50%); margin-left: auto;">Score: ${p.riskScore}</span>
-        </div>
-        <div style="font-size: 12px; color: hsl(0 0% 70%); line-height: 1.4;">${p.description}</div>
+  const p = feature.properties;
+  const popupContent = `
+    <div style="min-width: 200px; padding: 4px 0;">
+      <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${p.name}</div>
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: ${RISK_COLORS[p.riskLevel]};" aria-hidden="true"></span>
+        <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; color: ${RISK_COLORS[p.riskLevel]};">${p.riskLevel}</span>
+        <span style="font-size: 11px; color: hsl(0 0% 50%); margin-left: auto;">Score: ${p.riskScore}</span>
       </div>
-    `;
-    (layer as L.Path).bindPopup(popupContent, {
-      maxWidth: 300,
-      className: "risk-popup",
-    });
-  }
+      <div style="font-size: 12px; color: hsl(0 0% 70%); line-height: 1.4;">${p.description}</div>
+    </div>
+  `;
+  (layer as L.Path).bindPopup(popupContent, {
+    maxWidth: 300,
+    className: "risk-popup",
+  });
 }
 
-// Sub-component to handle layer changes — re-filters GeoJSON
-function RiskOverlay({ activeLayer }: { activeLayer: RiskLayer }) {
+function RiskOverlay({
+  collection,
+  activeLayer,
+}: {
+  collection: RiskZoneCollection;
+  activeLayer: RiskLayer;
+}) {
   const filteredFeatures = useMemo(() => {
     if (activeLayer === "combined") {
-      return mockRiskZones.features;
+      return collection.features;
     }
-    return mockRiskZones.features.filter(
+    return collection.features.filter(
       (f) => f.properties.riskType === activeLayer || f.properties.riskType === "combined"
     );
-  }, [activeLayer]);
+  }, [collection, activeLayer]);
 
   const geojsonData = useMemo(
     () => ({
@@ -68,62 +68,24 @@ function RiskOverlay({ activeLayer }: { activeLayer: RiskLayer }) {
 
   return (
     <GeoJSON
-      key={activeLayer} // Force remount on layer change for clean transition
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data={geojsonData as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      style={getFeatureStyle as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onEachFeature={onEachFeature as any}
+      key={`${activeLayer}-${collection.features.length}`}
+      data={geojsonData as never}
+      style={getFeatureStyle as never}
+      onEachFeature={onEachFeature as never}
     />
   );
 }
 
-export default function RiskMap() {
-  const [activeLayer, setActiveLayer] = useState<RiskLayer>("combined");
+function RecenterMap({ region }: { region: Region }) {
+  const map = useMap();
 
-  return (
-    <div className="relative w-full h-[55vh] lg:h-[60vh] rounded-2xl overflow-hidden border border-border-subtle">
-      <MapContainer
-        center={[10.2, 76.5]}
-        zoom={8}
-        className="h-full w-full"
-        zoomControl={false}
-        attributionControl={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        />
-        <RiskOverlay activeLayer={activeLayer} />
-        {/* Re-add zoom control in a better position */}
-        <ZoomControl />
-      </MapContainer>
+  useEffect(() => {
+    map.setView([region.center.lat, region.center.lng], region.zoom, { animate: true });
+  }, [map, region]);
 
-      {/* Map overlays */}
-      <div className="absolute top-4 right-4 z-[1000]">
-        <LayerToggle activeLayer={activeLayer} onLayerChange={setActiveLayer} />
-      </div>
-
-      <div className="absolute bottom-8 left-4 z-[1000]">
-        <MapLegend />
-      </div>
-
-      {/* Live indicator */}
-      <div className="absolute top-4 left-4 z-[1000]">
-        <div className="flex items-center gap-2 rounded-lg bg-bg-primary/90 backdrop-blur-md border border-border-subtle px-3 py-1.5 shadow-lg">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-risk-low opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-risk-low" />
-          </span>
-          <span className="text-xs font-medium text-text-secondary">LIVE</span>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
-// Leaflet zoom control in custom position
 function ZoomControl() {
   const map = useMap();
 
@@ -136,4 +98,84 @@ function ZoomControl() {
   }, [map]);
 
   return null;
+}
+
+interface RiskMapProps {
+  heightClassName?: string;
+}
+
+export default function RiskMap({
+  heightClassName = "h-[55vh] lg:h-[60vh]",
+}: RiskMapProps) {
+  const { region } = useRegion();
+  const { data, error } = useData(() => getRiskZones(region.id), [region.id]);
+  const [activeLayer, setActiveLayer] = useState<RiskLayer>("combined");
+
+  return (
+    <div
+      className={`relative w-full ${heightClassName} rounded-2xl overflow-hidden border border-border-subtle`}
+    >
+      <MapContainer
+        center={[region.center.lat, region.center.lng]}
+        zoom={region.zoom}
+        className="h-full w-full"
+        zoomControl={false}
+        attributionControl={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        />
+        {data && data.features.length > 0 && (
+          <RiskOverlay collection={data} activeLayer={activeLayer} />
+        )}
+        <RecenterMap region={region} />
+        <ZoomControl />
+      </MapContainer>
+
+      <div className="absolute top-4 right-4 z-[1000]">
+        <LayerToggle activeLayer={activeLayer} onLayerChange={setActiveLayer} />
+      </div>
+
+      <div className="absolute bottom-8 left-4 z-[1000]">
+        <MapLegend />
+      </div>
+
+      <div className="absolute top-4 left-4 z-[1000]">
+        <div className="flex items-center gap-2 rounded-lg bg-bg-primary/90 backdrop-blur-md border border-border-subtle px-3 py-1.5 shadow-lg">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-risk-low opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-risk-low" />
+          </span>
+          <span className="text-xs font-medium text-text-secondary">{region.name}</span>
+        </div>
+      </div>
+
+      {error && (
+        <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-bg-primary/60 backdrop-blur-sm">
+          <p className="text-sm text-risk-high px-4 text-center">
+            Failed to load risk zones for {region.name}.
+          </p>
+        </div>
+      )}
+
+      {!error && data && data.features.length === 0 && (
+        <div className="absolute inset-x-0 bottom-24 z-[1001] flex justify-center px-4">
+          <div className="rounded-xl border border-border-subtle bg-bg-primary/90 backdrop-blur-md px-4 py-3 shadow-lg">
+            <p className="text-xs text-text-secondary">
+              No monitored risk zones in {region.name} yet.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!error && !data && (
+        <div className="absolute inset-0 z-[1001] flex items-center justify-center bg-bg-primary/40">
+          <svg className="h-8 w-8 animate-spin text-text-secondary" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeDasharray="30 70" />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
 }

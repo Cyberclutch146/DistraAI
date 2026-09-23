@@ -1,9 +1,18 @@
+import Link from "next/link";
+
+const platformLinks = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Map", href: "/map" },
+  { label: "Alerts", href: "/alerts" },
+  { label: "Community", href: "/community" },
+  { label: "Reports", href: "/reports" },
+];
+
 export default function Footer() {
   return (
     <footer className="border-t border-border-subtle bg-bg-primary" role="contentinfo">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Data Sources */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-3">
               Data Sources
@@ -16,27 +25,23 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-3">
               Platform
             </h3>
             <div className="grid grid-cols-2 gap-1.5 text-sm">
-              {["About", "Documentation", "API Access", "Privacy Policy", "Terms of Use", "Contact"].map(
-                (link) => (
-                  <a
-                    key={link}
-                    href="#"
-                    className="text-text-secondary hover:text-text-primary transition-colors"
-                  >
-                    {link}
-                  </a>
-                )
-              )}
+              {platformLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Disclaimer */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-3">
               Disclaimer
@@ -52,7 +57,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-sm text-text-tertiary">
             <span className="font-semibold text-text-secondary">
@@ -62,10 +66,7 @@ export default function Footer() {
             <span>Disaster Intelligence Platform</span>
           </div>
           <div className="font-data text-xs text-text-tertiary">
-            Last data refresh:{" "}
-            <span className="text-text-secondary">
-              {new Date().toISOString().replace("T", " ").slice(0, 19)} UTC
-            </span>
+            Displayed values are sample data for demonstration purposes.
           </div>
         </div>
       </div>

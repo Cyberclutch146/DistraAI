@@ -1,3 +1,7 @@
+"use client";
+
+import { useId } from "react";
+
 interface SparklineProps {
   data: number[];
   color?: string;
@@ -6,6 +10,18 @@ interface SparklineProps {
   threshold?: number;
   thresholdColor?: string;
   fillOpacity?: number;
+}
+
+export function computeThresholdY(
+  threshold: number,
+  min: number,
+  max: number,
+  padding: number,
+  height: number
+): number {
+  const range = max - min || 1;
+  const y = padding + (height - padding * 2) - ((threshold - min) / range) * (height - padding * 2);
+  return Math.min(Math.max(y, padding), height - padding);
 }
 
 export default function Sparkline({
@@ -17,6 +33,8 @@ export default function Sparkline({
   thresholdColor = "var(--risk-high)",
   fillOpacity = 0.1,
 }: SparklineProps) {
+  const gradientId = `sparkline-gradient-${useId().replace(/[:]/g, "")}`;
+
   if (data.length < 2) return null;
 
   const min = Math.min(...data);
@@ -27,14 +45,12 @@ export default function Sparkline({
   const chartWidth = width - padding * 2;
   const chartHeight = height - padding * 2;
 
-  // Build path points
   const points = data.map((value, index) => {
     const x = padding + (index / (data.length - 1)) * chartWidth;
     const y = padding + chartHeight - ((value - min) / range) * chartHeight;
     return { x, y };
   });
 
-  // Build smooth SVG path with cubic bezier
   let linePath = `M ${points[0].x} ${points[0].y}`;
   for (let i = 1; i < points.length; i++) {
     const prev = points[i - 1];
@@ -44,15 +60,13 @@ export default function Sparkline({
     linePath += ` C ${cpx1} ${prev.y}, ${cpx2} ${curr.y}, ${curr.x} ${curr.y}`;
   }
 
-  // Fill path (close to bottom)
   const fillPath =
     linePath +
     ` L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`;
 
-  // Threshold line Y position
   const thresholdY =
     threshold !== undefined
-      ? padding + chartHeight - ((threshold - min) / range) * chartHeight
+      ? computeThresholdY(threshold, min, max, padding, height)
       : undefined;
 
   return (
@@ -63,20 +77,15 @@ export default function Sparkline({
       className="overflow-visible"
       aria-hidden="true"
     >
-      {/* Gradient fill under the line */}
       <defs>
-        <linearGradient id={`sparkline-gradient-${data.length}`} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={color} stopOpacity={fillOpacity * 2} />
           <stop offset="100%" stopColor={color} stopOpacity={0} />
         </linearGradient>
       </defs>
 
-      <path
-        d={fillPath}
-        fill={`url(#sparkline-gradient-${data.length})`}
-      />
+      <path d={fillPath} fill={`url(#${gradientId})`} />
 
-      {/* Main line */}
       <path
         d={linePath}
         fill="none"
@@ -86,7 +95,6 @@ export default function Sparkline({
         strokeLinejoin="round"
       />
 
-      {/* Threshold line */}
       {thresholdY !== undefined && (
         <line
           x1={padding}
@@ -100,7 +108,6 @@ export default function Sparkline({
         />
       )}
 
-      {/* End dot */}
       <circle
         cx={points[points.length - 1].x}
         cy={points[points.length - 1].y}

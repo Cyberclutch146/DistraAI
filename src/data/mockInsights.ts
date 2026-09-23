@@ -1,15 +1,4 @@
-export interface InsightData {
-  id: string;
-  title: string;
-  value: string;
-  unit: string;
-  trend: "up" | "down" | "stable";
-  trendValue: string;
-  sparklineData: number[];
-  threshold?: number;
-  status: "normal" | "warning" | "danger";
-  icon: string;
-}
+import type { InsightData } from "./types";
 
 export const mockInsights: InsightData[] = [
   {
