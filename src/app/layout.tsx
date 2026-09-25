@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Karla, JetBrains_Mono } from "next/font/google";
+import { AuthProvider } from "@/state/auth-context";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -42,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${fraunces.variable} ${karla.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

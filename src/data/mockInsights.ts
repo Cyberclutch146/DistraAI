@@ -10,7 +10,7 @@ export const mockInsights: InsightData[] = [
     trendValue: "+23mm",
     sparklineData: [12, 18, 24, 15, 32, 28, 45, 52, 68, 72, 85, 94, 78, 102, 118, 127],
     status: "warning",
-    icon: "🌧",
+    icon: "",
   },
   {
     id: "soil-saturation",
@@ -22,7 +22,7 @@ export const mockInsights: InsightData[] = [
     sparklineData: [62, 64, 68, 71, 73, 76, 78, 80, 82, 84, 85, 86, 87],
     threshold: 90,
     status: "warning",
-    icon: "🏔",
+    icon: "",
   },
   {
     id: "river-level",
@@ -34,7 +34,7 @@ export const mockInsights: InsightData[] = [
     sparklineData: [7.1, 7.3, 7.6, 7.8, 8.0, 8.2, 8.4, 8.6, 8.7, 8.9, 9.0, 9.1, 9.2],
     threshold: 9.5,
     status: "danger",
-    icon: "🌊",
+    icon: "",
   },
   {
     id: "satellite",
@@ -45,6 +45,6 @@ export const mockInsights: InsightData[] = [
     trendValue: "+1 zone",
     sparklineData: [0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3],
     status: "warning",
-    icon: "🛰",
+    icon: "",
   },
 ];

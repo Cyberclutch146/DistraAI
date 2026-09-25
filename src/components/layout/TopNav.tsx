@@ -15,6 +15,7 @@ const navItems = [
   { label: "Map", href: "/map" },
   { label: "Alerts", href: "/alerts" },
   { label: "Community", href: "/community" },
+  { label: "Chat", href: "/chat" },
   { label: "Reports", href: "/reports" },
 ];
 

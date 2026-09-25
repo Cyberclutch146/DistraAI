@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Chat messages: authenticated users can read and create.
+    match /chat_messages/{messageId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        // The uid field must match the authenticated user.
+        && request.resource.data.uid == request.auth.uid
+        // Text must be a non-empty string, max 1000 chars.
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1000
+        // Display name must be a string.
+        && request.resource.data.displayName is string
+        // photoURL is either a string or null.
+        && (request.resource.data.photoURL is string || request.resource.data.photoURL == null)
+        // createdAt must be a server timestamp.
+        && request.resource.data.createdAt is timestamp
+        // Only these 5 fields are allowed, nothing extra.
+        && request.resource.data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'text', 'createdAt']);
+
+      // Messages are an immutable log -- no edits or deletes.
+      allow update, delete: if false;
+    }
+
+    // Default deny for everything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
