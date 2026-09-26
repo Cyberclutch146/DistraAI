@@ -67,7 +67,7 @@ describe("toChatMessages", () => {
     expect(message.photoURL).toBeNull();
   });
 
-  it("falls back to the current time when createdAt is still pending", () => {
+  it("falls back to the current time when createdAt is missing", () => {
     const before = Date.now();
     const [message] = toChatMessages([messageDoc("m1", "just sent", null)]);
 

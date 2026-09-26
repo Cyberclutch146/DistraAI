@@ -10,10 +10,16 @@ service cloud.firestore {
       allow create: if request.auth != null
         // The uid field must match the authenticated user.
         && request.resource.data.uid == request.auth.uid
-        // Text must be a non-empty string, max 1000 chars.
+        // Text must be a non-empty string, max 1000 chars. `matches` is a full
+        // match in RE2, so `\\s*` matches only strings that are entirely
+        // whitespace -- rejecting the blank bodies that a bare size() check
+        // would admit. The client trims; the rules must not trust that it did.
+        // Note: no emulator is available in this environment, so this is
+        // unverified locally -- run `firebase emulators:exec` before trusting it.
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 1000
+        && !request.resource.data.text.matches('\\s*')
         // Display name must be a string.
         && request.resource.data.displayName is string
         // photoURL is either a string or null.

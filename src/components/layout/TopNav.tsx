@@ -40,6 +40,7 @@ export default function TopNav({ variant = "default", activePage = "Dashboard" }
             <div className="relative h-9 w-9">
               <div className="absolute inset-0 rounded-full bg-accent-subtle group-hover:bg-accent-muted transition-colors" />
               <svg
+                aria-hidden="true"
                 viewBox="0 0 32 32"
                 className="relative h-9 w-9"
                 fill="none"
@@ -100,6 +101,7 @@ export default function TopNav({ variant = "default", activePage = "Dashboard" }
               aria-label="Notifications"
             >
               <svg
+                aria-hidden="true"
                 className="h-[18px] w-[18px]"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -131,11 +133,11 @@ export default function TopNav({ variant = "default", activePage = "Dashboard" }
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
                 </svg>
               )}

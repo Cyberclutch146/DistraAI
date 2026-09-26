@@ -159,12 +159,12 @@ function Composer({ onSend }: { onSend: (text: string) => Promise<void> }) {
         )}
       >
         {sending ? (
-          <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+          <svg aria-hidden="true" className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         ) : (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
           </svg>
         )}
@@ -192,7 +192,7 @@ function SignInGate({ onSignIn }: { onSignIn: () => Promise<void> }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-6 animate-fade-in px-6">
       <div className="h-20 w-20 rounded-full bg-accent-subtle flex items-center justify-center">
-        <svg className="h-10 w-10 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <svg aria-hidden="true" className="h-10 w-10 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
         </svg>
       </div>
@@ -210,12 +210,12 @@ function SignInGate({ onSignIn }: { onSignIn: () => Promise<void> }) {
         className="btn-primary px-6 py-3 text-sm inline-flex items-center gap-3"
       >
         {busy ? (
-          <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+          <svg aria-hidden="true" className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
         ) : (
-          <svg className="h-5 w-5" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
             <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
             <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -269,7 +269,7 @@ function NotConfigured() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-5 animate-fade-in px-6 text-center">
       <div className="h-16 w-16 rounded-full bg-bg-wash flex items-center justify-center">
-        <svg className="h-8 w-8 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <svg aria-hidden="true" className="h-8 w-8 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008zM10.29 3.86l-7.32 12.7A1.5 1.5 0 004.41 18.7h15.18a1.5 1.5 0 001.44-2.14l-7.32-12.7a1.5 1.5 0 00-2.72 0z" />
         </svg>
       </div>
@@ -388,7 +388,7 @@ export default function ChatRoom() {
         ) : chatError ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 animate-fade-in px-6 text-center">
             <div className="h-14 w-14 rounded-full bg-risk-high/10 flex items-center justify-center">
-              <svg className="h-7 w-7 text-risk-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg aria-hidden="true" className="h-7 w-7 text-risk-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008zM10.29 3.86l-7.32 12.7A1.5 1.5 0 004.41 18.7h15.18a1.5 1.5 0 001.44-2.14l-7.32-12.7a1.5 1.5 0 00-2.72 0z" />
               </svg>
             </div>
@@ -402,7 +402,7 @@ export default function ChatRoom() {
         ) : messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 animate-fade-in">
             <div className="h-14 w-14 rounded-full bg-accent-subtle flex items-center justify-center">
-              <svg className="h-7 w-7 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <svg aria-hidden="true" className="h-7 w-7 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
               </svg>
             </div>
