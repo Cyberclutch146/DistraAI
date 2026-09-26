@@ -46,6 +46,9 @@
   --accent-hover: #96492b;
   --accent-muted: #e8d2c4;        /* soft tint for active states */
   --accent-subtle: #f6eae0;       /* faint wash */
+  /* Ink for text sitting ON the accent fill (buttons, bubbles, monograms).
+     Warm off-white, never pure #fff, to keep the paper cast. */
+  --text-on-accent: #fbf6ee;
 
   /* Elevation — two warm-tinted levels, no glow */
   --shadow-card: 0 1px 2px rgba(88, 72, 56, 0.08);
@@ -81,6 +84,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-muted: var(--accent-muted);
   --color-accent-subtle: var(--accent-subtle);
+  --color-text-on-accent: var(--text-on-accent);
   --font-sans: var(--font-karla);
   --font-mono: var(--font-jetbrains-mono);
   --font-display: var(--font-fraunces);

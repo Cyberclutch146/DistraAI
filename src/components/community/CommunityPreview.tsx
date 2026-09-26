@@ -6,10 +6,10 @@ import { useData } from "@/lib/use-data";
 import { formatTimeAgo } from "@/lib/utils";
 import type { CommunityMessage } from "@/data/types";
 
-export const typeLabels: Record<string, { icon: string; color: string }> = {
-  report: { icon: "", color: "text-risk-high" },
-  update: { icon: "", color: "text-accent" },
-  question: { icon: "", color: "text-risk-moderate" },
+export const typeLabels: Record<string, { color: string }> = {
+  report: { color: "text-risk-high" },
+  update: { color: "text-accent" },
+  question: { color: "text-risk-moderate" },
 };
 
 export function MessageCard({ message }: { message: CommunityMessage }) {

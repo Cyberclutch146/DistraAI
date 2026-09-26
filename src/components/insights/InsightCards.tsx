@@ -28,15 +28,7 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div
-            className="flex items-center justify-center h-7 w-7 rounded-lg text-sm text-text-secondary bg-bg-wash border border-border-subtle"
-            aria-hidden="true"
-          >
-            {insight.icon}
-          </div>
-          <h3 className="eyebrow">{insight.title}</h3>
-        </div>
+        <h3 className="eyebrow">{insight.title}</h3>
         <div
           className="h-2 w-2 rounded-full ring-2 ring-bg-wash"
           style={{ backgroundColor: statusColors[insight.status] }}
@@ -78,8 +70,8 @@ function InsightCard({ insight, index }: { insight: InsightData; index: number }
 function InsightSkeleton() {
   return (
     <div className="card p-4 min-w-[220px] flex-1 animate-pulse">
-      <div className="flex items-center justify-between mb-3">
-        <div className="h-7 w-28 rounded-lg bg-bg-surface-hover" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-3 w-24 rounded bg-bg-surface-hover" />
         <div className="h-2 w-2 rounded-full bg-bg-surface-hover" />
       </div>
       <div className="h-8 w-16 rounded bg-bg-surface-hover mb-4" />

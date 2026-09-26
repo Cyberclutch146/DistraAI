@@ -119,7 +119,7 @@ export default function TopNav({ variant = "default", activePage = "Dashboard" }
               className="flex items-center gap-2 rounded-full p-1 hover:bg-bg-surface-hover/60 transition-all duration-200"
               aria-label="User profile"
             >
-              <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-sm font-semibold text-[#f6efe3] ring-1 ring-accent/20">
+              <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-sm font-semibold text-text-on-accent ring-1 ring-accent/20">
                 U
               </div>
             </button>
