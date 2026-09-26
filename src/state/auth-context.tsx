@@ -16,7 +16,7 @@ import {
   signOut as firebaseSignOut,
   type User,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, isFirebaseConfigured } from "@/lib/firebase";
 
 /* ── Public shape ── */
 
@@ -25,6 +25,11 @@ interface AuthContextValue {
   user: User | null;
   /** True while the initial auth state is being resolved. */
   loading: boolean;
+  /**
+   * False when no Firebase config was present at build time. Sign-in is
+   * unavailable in that case and the chat view explains why.
+   */
+  configured: boolean;
   /** Trigger Google sign-in popup. */
   signIn: () => Promise<void>;
   /** Sign the current user out. */
@@ -37,11 +42,17 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const googleProvider = new GoogleAuthProvider();
 
+const NOT_CONFIGURED =
+  "Firebase is not configured. Add the NEXT_PUBLIC_FIREBASE_* values to .env.local and rebuild.";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // Starts settled when unconfigured: there is no session to resolve, so
+  // consumers must not sit on a permanent loading skeleton.
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isFirebaseConfigured);
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
@@ -50,15 +61,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = useCallback(async () => {
+    if (!auth) throw new Error(NOT_CONFIGURED);
     await signInWithPopup(auth, googleProvider);
   }, []);
 
   const signOut = useCallback(async () => {
+    if (!auth) return;
     await firebaseSignOut(auth);
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, signIn, signOut }),
+    () => ({ user, loading, configured: isFirebaseConfigured, signIn, signOut }),
     [user, loading, signIn, signOut]
   );
 

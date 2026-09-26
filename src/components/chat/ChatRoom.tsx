@@ -48,7 +48,7 @@ function Avatar({ displayName, photoURL, size = 32 }: { displayName: string; pho
 
   return (
     <div
-      className="rounded-full bg-accent flex items-center justify-center text-[11px] font-semibold text-[#f6efe3] ring-1 ring-accent/20 shrink-0"
+      className="rounded-full bg-accent flex items-center justify-center text-[11px] font-semibold text-text-on-accent ring-1 ring-accent/20 shrink-0"
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
@@ -75,7 +75,7 @@ function MessageBubble({ message, isOwn }: { message: ChatMessage; isOwn: boolea
         className={cn(
           "max-w-[75%] min-w-0 rounded-2xl px-4 py-2.5 shadow-card",
           isOwn
-            ? "bg-accent text-[#fbf6ee] rounded-tr-md"
+            ? "bg-accent text-text-on-accent rounded-tr-md"
             : "bg-bg-surface border border-border-subtle rounded-tl-md"
         )}
       >
@@ -84,13 +84,13 @@ function MessageBubble({ message, isOwn }: { message: ChatMessage; isOwn: boolea
             {message.displayName}
           </p>
         )}
-        <p className={cn("text-sm leading-relaxed break-words", isOwn ? "text-[#fbf6ee]" : "text-text-primary")}>
+        <p className={cn("text-sm leading-relaxed break-words", isOwn ? "text-text-on-accent" : "text-text-primary")}>
           {message.text}
         </p>
         <p
           className={cn(
             "font-data text-[10px] mt-1",
-            isOwn ? "text-[#fbf6ee]/60 text-right" : "text-text-tertiary text-right"
+            isOwn ? "text-text-on-accent/60 text-right" : "text-text-tertiary text-right"
           )}
         >
           {formatChatTime(message.createdAt)}
@@ -154,7 +154,7 @@ function Composer({ onSend }: { onSend: (text: string) => Promise<void> }) {
         className={cn(
           "shrink-0 h-[44px] w-[44px] rounded-xl flex items-center justify-center transition-all duration-200",
           text.trim()
-            ? "bg-accent text-[#fbf6ee] shadow-card hover:bg-accent-hover"
+            ? "bg-accent text-text-on-accent shadow-card hover:bg-accent-hover"
             : "bg-bg-surface-hover text-text-tertiary cursor-not-allowed"
         )}
       >
@@ -262,12 +262,53 @@ function OnlineDot() {
 }
 
 /* ────────────────────────────────────────────────────────────
+   Not-configured notice — shown when the build had no Firebase
+   ──────────────────────────────────────────────────────────── */
+
+function NotConfigured() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-5 animate-fade-in px-6 text-center">
+      <div className="h-16 w-16 rounded-full bg-bg-wash flex items-center justify-center">
+        <svg className="h-8 w-8 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008zM10.29 3.86l-7.32 12.7A1.5 1.5 0 004.41 18.7h15.18a1.5 1.5 0 001.44-2.14l-7.32-12.7a1.5 1.5 0 00-2.72 0z" />
+        </svg>
+      </div>
+      <div>
+        <h2 className="serif-display text-xl font-medium tracking-tight mb-2">
+          Chat is not configured
+        </h2>
+        <p className="text-sm text-text-secondary max-w-sm mx-auto">
+          This build has no Firebase credentials, so live chat is unavailable.
+          Everything else on the dashboard works as usual.
+        </p>
+      </div>
+      <div className="text-left w-full max-w-md card-static p-4">
+        <p className="eyebrow-xs mb-2">To enable it</p>
+        <ol className="text-xs text-text-secondary space-y-1.5 list-decimal list-inside">
+          <li>Create a Firebase project and enable Google sign-in plus Cloud Firestore.</li>
+          <li>
+            Copy <code className="font-data text-text-primary">.env.example</code> to{" "}
+            <code className="font-data text-text-primary">.env.local</code> and paste your{" "}
+            <code className="font-data text-text-primary">NEXT_PUBLIC_FIREBASE_*</code> values.
+          </li>
+          <li>
+            Deploy the rules with{" "}
+            <code className="font-data text-text-primary">firebase deploy --only firestore:rules</code>.
+          </li>
+          <li>Restart the dev server — the config is inlined at build time.</li>
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
    Main ChatRoom component
    ──────────────────────────────────────────────────────────── */
 
 export default function ChatRoom() {
-  const { user, loading: authLoading, signIn, signOut } = useAuth();
-  const { messages, loading: chatLoading, sendMessage } = useChat(user);
+  const { user, loading: authLoading, configured, signIn, signOut } = useAuth();
+  const { messages, loading: chatLoading, error: chatError, sendMessage } = useChat(user);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   /* Auto-scroll when new messages arrive. */
@@ -277,6 +318,15 @@ export default function ChatRoom() {
       el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     }
   }, [messages]);
+
+  /* ── Firebase not configured ── */
+  if (!configured) {
+    return (
+      <div className="card-static flex flex-col h-[calc(100vh-220px)] min-h-[500px] overflow-hidden">
+        <NotConfigured />
+      </div>
+    );
+  }
 
   /* ── Auth loading state ── */
   if (authLoading) {
@@ -335,6 +385,20 @@ export default function ChatRoom() {
       >
         {chatLoading ? (
           <ChatSkeleton />
+        ) : chatError ? (
+          <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 animate-fade-in px-6 text-center">
+            <div className="h-14 w-14 rounded-full bg-risk-high/10 flex items-center justify-center">
+              <svg className="h-7 w-7 text-risk-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008zM10.29 3.86l-7.32 12.7A1.5 1.5 0 004.41 18.7h15.18a1.5 1.5 0 001.44-2.14l-7.32-12.7a1.5 1.5 0 00-2.72 0z" />
+              </svg>
+            </div>
+            <p className="text-sm text-text-secondary">
+              Could not load the conversation. The security rules may not be deployed yet.
+            </p>
+            <p className="text-xs text-text-tertiary font-data max-w-sm break-words">
+              {chatError}
+            </p>
+          </div>
         ) : messages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16 animate-fade-in">
             <div className="h-14 w-14 rounded-full bg-accent-subtle flex items-center justify-center">
