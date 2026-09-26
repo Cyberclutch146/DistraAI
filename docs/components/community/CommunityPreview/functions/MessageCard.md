@@ -8,7 +8,7 @@
 
 > **MessageCard**(`__namedParameters`): `Element`
 
-Defined in: [community/CommunityPreview.tsx:15](https://github.com/Cyberclutch146/DistraAI/blob/6f1415870233ee40220e21347c7dd46a362b82e0/src/components/community/CommunityPreview.tsx#L15)
+Defined in: [community/CommunityPreview.tsx:15](https://github.com/Cyberclutch146/DistraAI/blob/92c0c1611780524d804f4b33ea0bed2d370c7b89/src/components/community/CommunityPreview.tsx#L15)
 
 ## Parameters
 
