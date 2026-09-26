@@ -55,6 +55,7 @@ export function useChat(user: User | null) {
         setMessages(
           toChatMessages(snapshot.docs as unknown as ChatDocLike[])
         );
+        setError(null);
         setLoading(false);
       },
       (err) => {
