@@ -10,9 +10,9 @@ interface LayerToggleProps {
 }
 
 const layers: { id: RiskLayer; label: string; icon: string }[] = [
-  { id: "flood", label: "Flood", icon: "🌊" },
-  { id: "landslide", label: "Landslide", icon: "🏔" },
-  { id: "combined", label: "Combined", icon: "⚠" },
+  { id: "flood", label: "Flood", icon: "" },
+  { id: "landslide", label: "Landslide", icon: "" },
+  { id: "combined", label: "Combined", icon: "" },
 ];
 
 export default function LayerToggle({ activeLayer, onLayerChange }: LayerToggleProps) {
