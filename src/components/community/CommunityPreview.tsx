@@ -6,10 +6,10 @@ import { useData } from "@/lib/use-data";
 import { formatTimeAgo } from "@/lib/utils";
 import type { CommunityMessage } from "@/data/types";
 
-export const typeLabels: Record<string, { icon: string; color: string }> = {
-  report: { icon: "📍", color: "text-risk-high" },
-  update: { icon: "📢", color: "text-accent" },
-  question: { icon: "❓", color: "text-risk-moderate" },
+export const typeLabels: Record<string, { color: string }> = {
+  report: { color: "text-risk-high" },
+  update: { color: "text-accent" },
+  question: { color: "text-risk-moderate" },
 };
 
 export function MessageCard({ message }: { message: CommunityMessage }) {
@@ -39,7 +39,7 @@ export function MessageCard({ message }: { message: CommunityMessage }) {
         </p>
         <div className="mt-1.5 flex items-center gap-1.5">
           <div className="inline-flex items-center gap-1 text-[11px] text-text-tertiary bg-bg-wash px-2 py-0.5 rounded-md border border-border-subtle">
-            <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg aria-hidden="true" className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
             </svg>

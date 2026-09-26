@@ -45,7 +45,6 @@ export interface InsightData {
   sparklineData: number[];
   threshold?: number;
   status: "normal" | "warning" | "danger";
-  icon: string;
 }
 
 export interface CommunityMessage {

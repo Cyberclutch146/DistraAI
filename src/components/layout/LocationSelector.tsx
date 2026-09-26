@@ -43,6 +43,7 @@ export default function LocationSelector() {
         aria-label={`Select location, current: ${selected.name}`}
       >
         <svg
+          aria-hidden="true"
           className="h-4 w-4 text-accent shrink-0"
           fill="none"
           viewBox="0 0 24 24"
@@ -62,6 +63,7 @@ export default function LocationSelector() {
         </svg>
         <span className="max-w-[120px] truncate">{selected.name}</span>
         <svg
+          aria-hidden="true"
           className={`h-3.5 w-3.5 text-text-tertiary transition-transform ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
@@ -96,6 +98,7 @@ export default function LocationSelector() {
                     )}
                   >
                     <svg
+                      aria-hidden="true"
                       className={cn("h-4 w-4 shrink-0", selected.id === loc.id ? "text-accent" : "text-text-tertiary")}
                       fill="none"
                       viewBox="0 0 24 24"
@@ -119,6 +122,7 @@ export default function LocationSelector() {
                     </div>
                     {selected.id === loc.id && (
                       <svg
+                        aria-hidden="true"
                         className="ml-auto h-4 w-4 text-accent"
                         fill="none"
                         viewBox="0 0 24 24"

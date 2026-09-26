@@ -8,7 +8,7 @@
 
 > **default**(): `Element`
 
-Defined in: [map/MapLegend.tsx:1](https://github.com/Cyberclutch146/DistraAI/blob/6f1415870233ee40220e21347c7dd46a362b82e0/src/components/map/MapLegend.tsx#L1)
+Defined in: [map/MapLegend.tsx:1](https://github.com/Cyberclutch146/DistraAI/blob/b7d24b528650838e95d37bb55a74b74fe74bb086/src/components/map/MapLegend.tsx#L1)
 
 ## Returns
 

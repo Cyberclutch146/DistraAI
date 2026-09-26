@@ -7,6 +7,7 @@
 ## Modules
 
 - [alerts/AlertsFeed](alerts/AlertsFeed/README.md)
+- [chat/ChatRoom](chat/ChatRoom/README.md)
 - [community/CommunityPreview](community/CommunityPreview/README.md)
 - [insights/InsightCards](insights/InsightCards/README.md)
 - [insights/Sparkline](insights/Sparkline/README.md)

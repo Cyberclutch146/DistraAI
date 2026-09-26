@@ -15,8 +15,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 DistraAI is a Next.js 16 (App Router) disaster-intelligence dashboard prototype:
 per-region flood/landslide risk zones, alert feeds, sensor-look insights, and
 community ground reports, built with React 19, TypeScript, Tailwind CSS v4, and
-Leaflet. All data is bundled sample fixtures today (Kerala districts); the
-data-provider seam is designed for a real backend later.
+Leaflet. Risk data is bundled sample fixtures today (Kerala districts); the
+data-provider seam is designed for a real backend later. The `/chat` view is
+the exception — it is already live against Firebase (Auth + Firestore).
 
 ## Before writing code
 
@@ -25,8 +26,9 @@ data-provider seam is designed for a real backend later.
   routing, dynamic imports, cache, metadata), open the matching guide in
   `node_modules/next/dist/docs/` before writing code.
 - **Read the design docs.** `docs/design-system.md`, `docs/architecture.md`,
-  `docs/risk-scoring.md`, and `docs/data-layer.md` define conventions that code
-  must follow. `docs/contributing.md` has the editing rules.
+  `docs/risk-scoring.md`, `docs/data-layer.md`, and `docs/realtime.md` define
+  conventions that code must follow. `docs/contributing.md` has the editing
+  rules.
 
 ## Data access (non-negotiable)
 
@@ -35,6 +37,10 @@ data-provider seam is designed for a real backend later.
   `useData(fetcher, deps)` from `src/lib/use-data.ts`.
 - Keep returned shapes identical to `src/data/types.ts`. Adding a backend later
   depends on stable shapes.
+- Realtime chat is the ONE exception and must not be routed through
+  `data-client.ts`: it uses `useAuth()` (`src/state/auth-context.tsx`) and
+  `useChat(user)` (`src/lib/use-chat.ts`) against Firestore. See
+  `docs/realtime.md` before changing anything in that path.
 
 ## Design language
 
@@ -46,7 +52,11 @@ data-provider seam is designed for a real backend later.
   labels, body text in Karla (default).
 - Reuse existing utility classes and tokens from `src/app/globals.css`
   (`card*`, `btn-*`, `index-rule`, `animate-*`, `shadow-*`). Do NOT hardcode
-  colours; reference tokens.
+  colours; reference tokens. Text on an accent fill uses `text-text-on-accent`
+  (or `/60` for de-emphasis) — never a literal hex.
+- NO emoji anywhere in product code. Icons are inline SVG with
+  `stroke="currentColor"` + `aria-hidden="true"`, sized by Tailwind. Do not add
+  `icon` fields to data types or label tables to hold a glyph.
 - Entrances: use `animate-fade-in` / `animate-slide-up` / `animate-clip-reveal`
   / `animate-scale-in` with staggered `animationDelay`. They already respect
   `prefers-reduced-motion`.
@@ -74,8 +84,40 @@ data-provider seam is designed for a real backend later.
 
 - Leaflet components (`src/components/map/*`) are client-only. Import with
   `next/dynamic({ ssr: false })`.
-- Keep the CARTO Voyager light basemap; popups stay warm-paper styled.
-- Risk zone fills use `RISK_COLORS` from `src/lib/risk-colors.ts`.
+- Keep the standard OpenStreetMap basemap (with attribution); popups stay
+  warm-paper styled. The tile URL is a public demo server — do not ship it to
+  production traffic. Risk zone fills use `RISK_COLORS` from
+  `src/lib/risk-colors.ts`.
+
+## Realtime chat & Firebase
+
+- `src/lib/firebase.ts` initialises the SDK at module load. It is CLIENT-ONLY:
+  never import it from a server component or a route handler. Everything that
+  touches it is `"use client"`.
+- It must stay FAIL-SOFT. `getAuth()` throws synchronously with
+  `auth/invalid-api-key` when `apiKey` is missing, and `AuthProvider` is mounted
+  in the root layout — so an unguarded `getAuth` turns a missing `.env.local`
+  into a 500 on EVERY route. Guard with `isFirebaseConfigured` and export `null`
+  handles; never assume `auth`/`db` are non-null at the call site.
+- All config comes from `NEXT_PUBLIC_FIREBASE_*` env vars (see `.env.example`).
+  These are inlined into the browser bundle by design; the web config is not a
+  secret, and a fresh clone without `.env.local` must still render the whole
+  dashboard.
+- `firestore.rules` is the security boundary and is deny-by-default. A new
+  collection has NO access until it gets a `match` block, so write the block in
+  the same change as the feature. Rules only take effect once deployed
+  (`firebase deploy --only firestore:rules`) — `next dev` does not apply them.
+- Changing a rule requires updating `docs/realtime.md`.
+- Vitest runs in the `node` environment (no jsdom/testing-library), so realtime
+  logic must live in pure SDK-free modules — `toChatMessages` is in
+  `src/lib/chat-messages.ts` for exactly this reason. Extend
+  `src/lib/__tests__/use-chat.test.ts` when you touch it.
+- Firestore applies `limit` AFTER `orderBy`. To show the *newest* N messages,
+  query `desc` and reverse in code; an `asc` query pins the room to its oldest
+  page.
+- `onSnapshot` ALWAYS needs an error callback. The rules deny anonymous reads
+  and the listener is gated on a signed-in user; an unhandled listener failure
+  leaves the room silently empty.
 
 ## Testing & quality
 
@@ -85,6 +127,8 @@ data-provider seam is designed for a real backend later.
   `npm run build` may be impossible in this WSL/Windows environment (mount
   chmod/copyFile limits) — see the WSL note in README; rely on the gates above
   plus CI.
+- Re-run `npm run docs:components` when you add, rename, or change the props of
+  anything exported from `src/components/`.
 
 ## Environment quirks (WSL + Windows drive)
 

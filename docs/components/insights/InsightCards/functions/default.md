@@ -8,7 +8,7 @@
 
 > **default**(): `Element`
 
-Defined in: [insights/InsightCards.tsx:91](https://github.com/Cyberclutch146/DistraAI/blob/6f1415870233ee40220e21347c7dd46a362b82e0/src/components/insights/InsightCards.tsx#L91)
+Defined in: [insights/InsightCards.tsx:83](https://github.com/Cyberclutch146/DistraAI/blob/b7d24b528650838e95d37bb55a74b74fe74bb086/src/components/insights/InsightCards.tsx#L83)
 
 ## Returns
 

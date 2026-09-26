@@ -9,10 +9,10 @@ interface LayerToggleProps {
   onLayerChange: (layer: RiskLayer) => void;
 }
 
-const layers: { id: RiskLayer; label: string; icon: string }[] = [
-  { id: "flood", label: "Flood", icon: "" },
-  { id: "landslide", label: "Landslide", icon: "" },
-  { id: "combined", label: "Combined", icon: "" },
+const layers: { id: RiskLayer; label: string }[] = [
+  { id: "flood", label: "Flood" },
+  { id: "landslide", label: "Landslide" },
+  { id: "combined", label: "Combined" },
 ];
 
 export default function LayerToggle({ activeLayer, onLayerChange }: LayerToggleProps) {
@@ -29,13 +29,12 @@ export default function LayerToggle({ activeLayer, onLayerChange }: LayerToggleP
           aria-selected={activeLayer === layer.id}
           onClick={() => onLayerChange(layer.id)}
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+            "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
             activeLayer === layer.id
               ? "bg-accent-subtle text-accent"
               : "text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover"
           )}
         >
-          <span className="text-sm" aria-hidden="true">{layer.icon}</span>
           <span>{layer.label}</span>
         </button>
       ))}

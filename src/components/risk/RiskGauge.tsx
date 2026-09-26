@@ -52,6 +52,7 @@ export default function RiskGauge({ score, size = 180, strokeWidth = 10 }: RiskG
   return (
     <div className="relative inline-flex flex-col items-center">
       <svg
+        aria-hidden="true"
         width={size}
         height={size / 2 + 20}
         viewBox={`0 0 ${size} ${size / 2 + 20}`}

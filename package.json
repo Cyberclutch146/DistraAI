@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "docs:components": "typedoc --plugin typedoc-plugin-markdown --out docs/components --entryPointStrategy expand --exclude \"**/__tests__/**\" src/components"
+    "docs:components": "typedoc --plugin typedoc-plugin-markdown --out docs/components --entryPointStrategy expand --readme none --exclude \"**/__tests__/**\" src/components"
   },
   "dependencies": {
     "firebase": "^12.19.0",
