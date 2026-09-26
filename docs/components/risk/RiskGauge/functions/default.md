@@ -8,7 +8,7 @@
 
 > **default**(`__namedParameters`): `Element`
 
-Defined in: [risk/RiskGauge.tsx:11](https://github.com/Cyberclutch146/DistraAI/blob/92c0c1611780524d804f4b33ea0bed2d370c7b89/src/components/risk/RiskGauge.tsx#L11)
+Defined in: [risk/RiskGauge.tsx:11](https://github.com/Cyberclutch146/DistraAI/blob/b7d24b528650838e95d37bb55a74b74fe74bb086/src/components/risk/RiskGauge.tsx#L11)
 
 ## Parameters
 
